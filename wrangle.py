@@ -110,6 +110,7 @@ def wrangle_zillow():
         'finishedsquarefeet12',
         'fullbathcnt',
         'heatingorsystemtypeid',
+        'heatingorsystemdesc',
         'propertycountylandusecode',
         'propertylandusetypeid',
         'propertyzoningdesc',
@@ -121,9 +122,6 @@ def wrangle_zillow():
         'assessmentyear']
 
     zillow = zillow.drop(columns = dropcols)
-
-    # assume that since this is Southern CA, null means 'None' for heating system
-    zillow.heatingorsystemdesc.fillna('None', inplace = True)
 
     # replace nulls with median values for select columns
     zillow.lotsizesquarefeet.fillna(7313, inplace = True)
@@ -170,8 +168,7 @@ def wrangle_zillow():
                 {'bathroomcnt':'bathroom_count',
                 'buildingqualitytypeid':'quality_type',
                 'calculatedfinishedsquarefeet':'home_square_feet',
-                'roomcnt':'room_count',
-                'heatingorsystemdesc':'heating_system_desc'}, inplace = True)
+                'roomcnt':'room_count'}, inplace = True)
 
     return zillow
 
@@ -190,16 +187,4 @@ def train_validate_test_split(df, seed = 123):
     
     train, validate = train_test_split(train_validate, test_size=0.3, 
                                        random_state=seed)
-    return train, validate, test
-
-#The following function will create dummy variables and split a df into train, validate, test sets for modeling
-def get_dummy_vars_and_split(df):
-    #Get cols to create dummies for
-    cat_cols = df.select_dtypes('object').columns
-    
-    df_dummies = pd.get_dummies(df[cat_cols], dummy_na=False, drop_first=True)
-    df = pd.concat([df, df_dummies], axis = 1).drop(columns = cat_cols)
-
-    train, validate, test = train_validate_test_split(df)
-
     return train, validate, test
