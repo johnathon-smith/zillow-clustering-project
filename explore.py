@@ -22,6 +22,7 @@ def get_logerror_plots(df, hue = None, col = None):
             plt.show()
 
 #The following function will create three different groups of clusters and attach them to the train, validate, and test sets.
+#It takes in the train, validate, test data sets and a list of dictionaries containg the required info for each cluster group.
 def get_clusters(train, validate, test, clusters):
     #Loop through each group of cluster features, and create the clusters
     for cluster in clusters:
