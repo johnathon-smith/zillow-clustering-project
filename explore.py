@@ -8,7 +8,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.cluster import KMeans
 
 #The following function will create a relplot of logerror against each numeric variable in the provided dataset
-def get_logerror_plots(df, hue = None, col = None):
+def get_logerror_plots(df, hue_var = None, col_var = None):
     #Create a list of all numeric columns names
     num_cols = df.select_dtypes('number').columns
 
@@ -17,8 +17,7 @@ def get_logerror_plots(df, hue = None, col = None):
         if col == 'logerror':
             continue
         else:
-            plt.figure(figsize=(16, 8))
-            sns.relplot(x = col, y = 'logerror', hue = hue, col = col, data = df)
+            sns.relplot(x = col, y = 'logerror', hue = hue_var, col = col_var, data = df)
             plt.show()
 
 #The following function will create three different groups of clusters and attach them to the train, validate, and test sets.
