@@ -52,7 +52,7 @@ def make_metric_df(y, y_pred, model_name, metric_df):
         metric_df = pd.DataFrame(data=[
             {
                 'model': model_name, 
-                'RMSE: mean_squared_error(
+                'RMSE': mean_squared_error(
                     y,
                     y_pred) ** .5,
                 'r^2': explained_variance_score(
@@ -64,7 +64,7 @@ def make_metric_df(y, y_pred, model_name, metric_df):
         return metric_df.append(
             {
                 'model': model_name, 
-                'RMSE: mean_squared_error(
+                'RMSE': mean_squared_error(
                     y,
                     y_pred) ** .5,
                 'r^2': explained_variance_score(
@@ -90,11 +90,6 @@ def get_baseline(y_train, y_validate, y_test, metric_df):
     train_RMSE = mean_squared_error(y_train.logerror, y_train['baseline_mean_pred']) ** .5
     validate_RMSE = mean_squared_error(y_validate.logerror, y_validate['baseline_mean_pred']) ** .5
 
-    #Print RMSE
-    print("RMSE using Mean\nTrain/In-Sample: ", round(train_RMSE, 4), 
-        "\nValidate/Out-of-Sample: ", round(validate_RMSE, 4),
-        "\n")
-
     metric_df = make_metric_df(y_validate.logerror, y_validate['baseline_mean_pred'], 'validate_baseline_mean', metric_df)
 
     return y_train, y_validate, y_test, metric_df
@@ -114,9 +109,6 @@ def get_ols_model(X_train_scaled, X_validate_scaled, y_train, y_validate, metric
     #Calculate the RMSE
     train_RMSE = mean_squared_error(y_train.logerror, y_train['lm_preds']) ** .5
     validate_RMSE = mean_squared_error(y_validate.logerror, y_validate['lm_preds']) ** .5
-
-    print("RMSE using OLS\nTrain/In-Sample: ", round(train_RMSE, 4), 
-        "\nValidate/Out-of-Sample: ", round(validate_RMSE, 4))
 
     metric_df = make_metric_df(y_validate.logerror, y_validate['lm_preds'], 'validate_ols', metric_df)
 
@@ -145,17 +137,13 @@ def get_lars_models(X_train_scaled, X_validate_scaled, y_train, y_validate, metr
 
         #Add model to list of lars models
         lars_models.append({f'lars_alpha_{i}': lars})
-        
-        print(f'\nRMSE using LassoLars, alpha = {i}')
-        print("Train/In-Sample: ", round(train_RMSE, 4), 
-        "\nValidate/Out-of-Sample: ", round(validate_RMSE, 4))
 
         metric_df = make_metric_df(y_validate.logerror, y_validate[f'lars_alpha_{i}'], f'validate_lars_alpha_{i}', metric_df)
 
     return lars_models, metric_df
 
 #The following function will create RandomForestRegressor models, print the RMSE, and add them to the metric df
-def get_rfr_models():
+def get_rfr_models(X_train_scaled, X_validate_scaled, y_train, y_validate, metric_df):
     #Starting from 2 in order to avoid warnings
     rfr_models = []
 
@@ -178,12 +166,31 @@ def get_rfr_models():
 
             #Add model to the list
             rfr_models.append({f'rfr_depth_{num}_samples_{val}': model})
-
-            print(f'\nRMSE for Max Depth = {num}, Min Samples = {val}\n')
-            print("Train/In-Sample: ", round(train_RMSE, 4), 
-                "\nValidate/Out-of-Sample: ", round(validate_RMSE, 4))
         
             #Add results to metric dataframe
             metric_df = make_metric_df(y_validate.logerror, y_validate[f'rfr_depth_{num}_samples_{val}_preds'], f'validate_rfr_depth_{num}_samples_{val}', metric_df)
         
     return rfr_models, metric_df
+
+
+#The following function will plot my best model's predictions from the test data set
+def plot_predictions(y_test):
+    plt.figure(figsize = (16, 8))
+    plt.plot(y_test.logerror, y_test.logerror, color = 'green', label = 'Ideal: Actual Log Error')
+    plt.plot(y_test.logerror, y_test['baseline_mean_pred'], color = 'red', label = 'Baseline: Mean Log Error')
+    plt.scatter(y_test.logerror, y_test['predictions'], alpha = 0.5)
+    plt.legend()
+    plt.title('My Best Model: Predictions')
+    plt.xlabel('Actual Log Error')
+    plt.ylabel('Predicted Log Error')
+    plt.show()
+
+#The following function will plot the residuals from my best model's predictions on the test data set
+def plot_residuals(y_test):
+    plt.figure(figsize=(16,8))
+    plt.scatter( y_test.logerror, y_test.logerror - y_test['predictions'], alpha = .5)
+    plt.axhline(label="No Error", color = 'green')
+    plt.title('My Best Model: Residuals')
+    plt.xlabel('Actual Log Error')
+    plt.ylabel('Prediction Error (Residuals)')
+    plt.show()
