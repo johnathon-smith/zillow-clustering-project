@@ -77,6 +77,10 @@ Outcome: Rejected the Null Hypothesis.
 ### My Process
 ***
 
+##### Trello Board
+ - https://trello.com/b/kbVX7e4p/clustering-project
+
+
 ##### Plan
 - [x] Write a README.md file that details my process, my findings, and instructions on how to recreate my project.
 - [x] Acquire the zillow data from the Codeup Database
