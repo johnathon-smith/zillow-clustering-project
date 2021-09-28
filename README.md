@@ -1,11 +1,21 @@
 ## Zillow Clustering Project
 ***
 
-### Project Summary
+### Executive Summary - Conclusions and Next Steps
 ***
 
 #### Goal
-* Discover drivers of error in the Z-Estimate
+* Discover drivers of error in the Zestimate
+
+#### Findings
+
+* According to the important features property of my best model, the top drivers of logerror are structure value per square foot, size, and location.
+* Unfortunately, since my model did not perform much better than baseline, I recommend further exploration using the features listed above as a starting point for clustering.
+
+***
+
+### Project Summary
+***
 
 #### Audience
 * The Zillow data science team.
@@ -23,7 +33,7 @@
 #### Data Dictionary (Relevant Columns Only)
 | Target | Datatype | Definition |
 |:-------|:---------|:------------|
-| logerror | float | The Z-Estimate error |
+| logerror | float | The Zestimate error |
 
 | Feature | Datatype | Definition |
 |:--------|:---------|:------------|
@@ -63,14 +73,6 @@ __Hypothesis 3__
 * alpha = 0.05
 
 Outcome: Rejected the Null Hypothesis.
-
-***
-
-### Executive Summary - Conclusions and Next Steps
-***
-
-* According to the important features property of my best model, the top drivers of logerror are structure value per square foot, size, and location.
-* Unfortunately, since my model did not perform much better than baseline, I recommend further exploration using the features listed above as a starting point for clustering.
 
 ***
 
